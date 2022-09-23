@@ -1,0 +1,246 @@
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  height: 100vh;
+  position: relative;
+  background-color: rgb(7, 7, 7);
+  color: beige;
+}
+
+h1, h2, h3 {
+  font-weight: normal;
+}
+.perfil h1 {
+  color: beige;
+  font-weight: normal;
+}
+
+nav ul {
+  list-style: none;
+  overflow: hidden;
+  background-color: rgb(255, 115, 0);
+}
+
+nav ul li {
+  font-size: 1.5em;
+  -webkit-transition: background-color 0.5s;
+  transition: background-color 0.5s;
+  color: black;
+  padding: 20px;
+}
+
+nav ul a:nth-child(1) {
+  float: left;
+}
+
+nav ul a:nth-child(n+2) {
+  float: right;
+}
+
+nav ul li:hover {
+  background-color: rgb(220, 99, 0);
+}
+
+@media (max-width: 600px) {
+  nav li {
+    margin: unset !important;
+    text-align: center;
+    padding: 10px 0;
+  }
+  nav a {
+    float: unset !important;
+  }
+  nav ul {
+    overflow: unset !important;
+  }
+}
+
+#index-text {
+  color: beige;
+  text-align: center;
+  margin-top: 60px;
+  font-size: 4rem;
+}
+
+form {
+  margin: 10px auto 0 auto;
+  max-width: 600px;
+  width: 100%;
+  padding: 0 20px;
+}
+
+form input {
+  background-color: black;
+  color: beige;
+  width: 100%;
+  outline: none;
+  border: 1px solid black;
+  margin: 10px 0;
+  padding: 10px 10px 10px 5px;
+}
+
+form button {
+  background-color: black;
+  border: none;
+  color: beige;
+  margin-top: 10px;
+  padding: 10px 20px;
+}
+
+/*Remove Default Form Styling*/
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: 100%;
+}
+
+#footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: rgb(255, 115, 0);
+  width: 100%;
+}
+
+#footer p {
+  text-align: center;
+  font-size: 1.5rem;
+  padding: 30px 0;
+  color: black;
+}
+
+@media (max-height: 800px) {
+  #footer {
+    position: static;
+    margin-top: 400px;
+  }
+  #footer p {
+    padding: 30px 0 200px 0;
+  }
+}
+
+.header {
+  color: beige;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.form-message {
+  margin: 20px auto 0 auto;
+  border-radius: 10px;
+  text-transform: capitalize;
+  max-width: 560px;
+  width: 90%;
+  height: 60px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.form-message p {
+  text-align: center;
+  font-size: 1.6rem;
+}
+
+.form-message-red {
+  background-color: #ff9f5b;
+  border: 2px solid #ff6f00;
+}
+
+.form-message-green {
+  background-color: rgb(21, 21, 21);
+  border: 2px solid rgb(3, 3, 3);
+  color: beige;
+}
+
+.form-sub-msg {
+  margin: 20px auto 0 auto;
+  width: 90%;
+  max-width: 560px;
+  color: #c1c1c1;
+}
+
+a, a:link, a:visited, a:hover, a:active {
+  text-decoration: none;
+  color: inherit;
+}
+
+.title {
+  padding: 6px;
+  width: 100%;
+  font-size: 30px;
+  text-align: center;
+  color: beige;
+  border-bottom:rgb(171, 77, 0) 4px solid;
+}
+
+.list {
+  padding: 10px;
+  float: left;
+  height: 100%;
+  width: 25%;
+  font-size: 30px;
+  font-weight: normal;
+  text-align: center;
+  background-color: rgb(220, 99, 0);
+  border: rgb(171, 77, 0) 2px solid;
+
+}
+
+.coluna-2 {
+  float: left;
+  width: 50%;
+  font-size: 30px;
+  text-align: left;
+  background-color: rgb(220, 99, 0);
+}
+
+
+
+/*# sourceMappingURL=style.css.map */
+/*
+#info {
+  height: 165px;
+  width: 100%;
+  line-height: 40px;
+}
+/*
+#info #bot {
+  width: 100%;
+  font-size: 20px;
+  height: 30px;
+  color: beige;
+  background-color: black;
+  border: none;
+}
+/*
+#info #bot :hover {
+  margin-top: 5px;
+  background-color: rgb(21, 21, 21);
+}
+
+#perfil, #trans, #servicos, #empresa {
+  height: 70px;
+  line-height: 70px;
+  width: 100%;
+}
+
+#empresa .list {
+  float: left;
+  height: 100%;
+  width: 50%;
+  font-size: 30px;
+  text-align: center;
+  background-color: rgb(220, 99, 0);
+}
