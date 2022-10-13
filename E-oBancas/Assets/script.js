@@ -36,15 +36,36 @@ function escrever(servicos) {
 }
 */
 
+document.getElementById("show").addEventListener("click", Empregados);
+async function Empregados() {
+    const res = await fetch("./Source/Controllers/Empresas.php?q=show", { method: 'GET'});
+    const data = await res.json();
+    console.log(data);
 
-async function fetchData() {
-    const response = await fetch('../E-oBancas/Source/Controllers/Users.php?q=servicos');
-    const data = await response.json();
-
-    data.forEach(obj => {
-        Object.entries(obj).forEach(([key, value]) => {
-            console.log(`${key} ${value}`);
-        });
-        console.log('-------------------');
+    data.forEach( i => {
+        document.getElementById('funcionarios').insertAdjacentHTML("afterbegin", `
+            <div id="funcionarios">
+                Nome: ${i.usersName}
+                Email: ${i.usersEmail}
+                Saldo: ${i.usersSaldo}
+            </div>
+        `)
     });
 }
+
+document.getElementById("editar").addEventListener("click", Editar);
+
+function Editar() {
+    document.getElementById("infoEdit").innerHTML = `
+    <div class="coluna-2">
+        Nome</br>
+        Email 
+    </div>
+    <div class="coluna-2">
+        <input type="text" name="usersName">
+        <input type="text" name="usersEmail">
+        <input type="password" name="usersPwd">
+    </div>
+    `;
+}
+

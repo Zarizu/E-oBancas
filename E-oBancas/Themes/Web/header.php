@@ -1,7 +1,3 @@
-<?php 
-    session_start();
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,10 +13,12 @@
         <ul>
             <a href="index.php"><li>E-oBancas</li></a>
             <?php if(!isset($_SESSION['usersName'])) : ?>
-                <a href="./Source/Controllers/Users.php?q=signup"><li>Cadastro</li></a>
-                <a href="./Source/Controllers/Users.php?q=login"><li>Entrar</li></a>
+                <a href="./Themes/Web/Funcionario/signup.php"><li>Cadastro</li></a>
+                <a href="./Themes/Web/Empresa/signup.php"><li>Cadastro E</li></a>
+                <a href="./Themes/Web/Funcionario/login.php"><li>Entrar</li></a>
+                <a href="./Themes/Web/Empresa/login.php"><li>Entrar E</li></a>
             <?php else: ?>
-                <a href="./Source/Controllers/Users.php?q=logout"><li>Sair</li></a>
+                <a href="./Source/Controllers/Funcionarios.php?q=logout"><li>Sair</li></a>
             <?php endif; ?>
         </ul>
     </nav>
