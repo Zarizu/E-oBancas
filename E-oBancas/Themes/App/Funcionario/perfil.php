@@ -14,7 +14,7 @@
                     <?php echo($_SESSION['usersEmail']); ?></br>
                 </div>
             </div>
-            <button type="submit" id="editar">Editar</button>
+            <button type="submit" id="editar" onclick="editar()">Editar</button>
 
         </div>
 

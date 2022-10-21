@@ -34,7 +34,7 @@ function escrever(servicos) {
     list.innerHTML = `${servicos[]}`;
 
 }
-*/
+
 
 document.getElementById("show").addEventListener("click", Empregados);
 async function Empregados() {
@@ -52,20 +52,24 @@ async function Empregados() {
         `)
     });
 }
+*/
 
-document.getElementById("editar").addEventListener("click", Editar);
 
-function Editar() {
-    document.getElementById("infoEdit").innerHTML = `
-    <div class="coluna-2">
-        Nome</br>
-        Email 
-    </div>
-    <div class="coluna-2">
-        <input type="text" name="usersName">
-        <input type="text" name="usersEmail">
-        <input type="password" name="usersPwd">
-    </div>
-    `;
+function editar() {
+    const info = document.getElementById('info')
+    info.innerHTML = `
+    <div id="info">
+        <div class="title">Informações</div>
+        <form method="post" action="./Source/Controllers/Funcionarios.php">
+            <input type="hidden" name="type" value="edit">
+            <input type="text" name="editName" 
+            placeholder="Nome Completo">
+            <input type="text" name="editEmail" 
+            placeholder="Endereço de Email">
+            <input type="password" name="editPwd" 
+            placeholder="Palavra-chave">
+            <button type="submit" name="submit">Confirmar</button>
+            <?php flash('edit') ?>
+        </form>
+    </div>`
 }
-

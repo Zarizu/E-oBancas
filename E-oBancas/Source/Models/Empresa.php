@@ -53,7 +53,6 @@ class Empresa {
     }
 
     public function edit($data, $old) {
-
         $this->db->query("UPDATE empresas SET usersName = :name WHERE usersName = :oldName");
         $this->db->bind(':name', $data['editName']);
         $this->db->bind(':oldName', $old['oldName']);
@@ -95,12 +94,11 @@ class Empresa {
         }
     }
 
-    public function hireUser($nameOrEmail, $empresa) {
-        $row = $this->findUser($nameOrEmail, $nameOrEmail);
+    public function hireUser($user, $empresa) {
+        $row = $this->findUser($user, $user);
 
         if($row == false) return false;
         $funcionario = $row->usersEmpresa;
-
         if($funcionario == $empresa) return false;
 
         if($funcionario == 0) {
@@ -142,7 +140,7 @@ class Empresa {
     public function getEmpregados($empresa) {
         $this->db->query('SELECT * FROM funcionarios WHERE usersEmpresa = :empresa');
         $this->db->bind(':empresa', $empresa);
-        $empregados = $this->db->single();
+        $empregados = $this->db->resultSet();
 
         if($this->db->rowCount() > 0){
             return $empregados;
@@ -154,12 +152,17 @@ class Empresa {
     public function qntEmpregados($empresa) {
         $this->db->query('SELECT * FROM funcionarios WHERE usersEmpresa = :empresa');
         $this->db->bind(':empresa', $empresa);
-        $qntEmpregados = $this->db->rowCount();
+        $this->db->execute();
+        $qntEmpresa = $this->db->rowCount();
+        if($qntEmpresa == 0) return 0;
 
-        if($qntEmpregados > 0){
-            return $qntEmpregados;
-        }else{
-            return false;
+        $this->db->query("UPDATE empresas SET usersEmpregados = :qntEmpresa WHERE idE = :empresa");
+        $this->db->bind(':qntEmpresa', $qntEmpresa);
+        $this->db->bind(':empresa', $empresa);
+        if($this->db->execute()) {
+            return $qntEmpresa;
+        } else {
+            return 0;
         }
     }
 

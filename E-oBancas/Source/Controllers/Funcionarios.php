@@ -65,6 +65,48 @@
             }
         }
 
+        
+        public function edit() {
+            //Init data
+            $data = [
+                'editName' => $_POST['editName'],
+                'editEmail' => $_POST['editEmail'],
+                'editPwd' => $_POST['editPwd']
+            ];
+            $old = [
+                'oldName' => $_SESSION['usersName'],
+                'oldEmail' => $_SESSION['usersEmail'],
+                'oldPwd' => $_SESSION['usersPwd']
+            ];
+            $home = "../../index.php";
+            $oldUser = $this->ModeloEmpresa->findUser($_SESSION['usersName'], $_SESSION['usersName']);
+
+            if(empty($data['editName']) || empty($data['editEmail']) || empty($data['editEmpresa']) || empty($data['editPwd'])){
+                flash("edit", "Preencha todos os campos");
+            }
+        
+            if($this->ModeloEmpresa->findUser($data['editEmail'], $data['editName'])){
+                flash("edit", "Nome ou Email já estão sendo usados");
+            }
+
+            $data['editPwd'] = password_hash($data['editPwd'], PASSWORD_DEFAULT);
+            $oldPwd = $oldUser->usersPwd;
+            if($oldPwd == $data['editPwd']) {
+                flash("edit", "Use uma senha diferente");
+            }
+
+
+            if($this->ModeloEmpresa->edit($data, $old)) {
+                $_SESSION['usersName'] = $data['editName'];
+                $_SESSION['usersEmail'] = $data['editEmail'];
+                $_SESSION['usersPwd'] = $data['editPwd'];
+                redirect($home);
+            }else {
+                die("Algo deu errado");
+            }
+            
+        }
+
         public function login() {
 
             //Init data
@@ -97,10 +139,11 @@
         }
 
         public function createUserSession($user) {
-            $_SESSION['Id'] = $user->usersId;
+            $_SESSION['Id'] = $user->IdF;
             $_SESSION['usersName'] = $user->usersName;
             $_SESSION['usersEmail'] = $user->usersEmail;
             $_SESSION['usersEmpresa'] = $user->usersEmpresa;
+            $_SESSION['usersPwd'] = $user->usersPwd;
             $_SESSION['usersSaldo'] = $user->usersSaldo;
             $_SESSION['type'] = $user->type;
             redirect("../../index.php");

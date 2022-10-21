@@ -51,6 +51,32 @@ class Funcionario {
         }
     }
 
+    public function edit($data, $old) {
+
+        $this->db->query("UPDATE empresas SET usersName = :name WHERE usersName = :oldName");
+        $this->db->bind(':name', $data['editName']);
+        $this->db->bind(':oldName', $old['oldName']);
+        $this->db->execute();
+
+        $this->db->query("UPDATE empresas SET usersEmail = :email WHERE usersEmail = :oldEmail");
+        $this->db->bind(':email', $data['editEmail']);
+        $this->db->bind(':oldEmail', $old['oldEmail']);
+        $this->db->execute();
+
+        $this->db->query("UPDATE empresas SET usersPwd = :password WHERE usersPwd = :oldPwd");
+        $this->db->bind(':password', $data['editPwd']);
+        $this->db->bind(':oldPwd', $old['oldPwd']);
+        $this->db->execute();
+        
+        //Execute
+        if($this->db->execute()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
     //Login user
     public function login($nameOrEmail, $password) {
         $row = $this->findUser($nameOrEmail, $nameOrEmail);

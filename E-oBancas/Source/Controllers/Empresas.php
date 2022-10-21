@@ -131,7 +131,7 @@
                 if($loggedInUser) {
                     //Create session
                     $this->createUserSession($loggedInUser);
-                }else{
+                } else {
                     flash("login", "Senha incorreta");
                     redirect($login);
                 }
@@ -142,14 +142,14 @@
         }
 
         public function createUserSession($user) {
-            $_SESSION['Id'] = $user->usersId;
+            $_SESSION['Id'] = $user->IdE;
             $_SESSION['usersName'] = $user->usersName;
             $_SESSION['usersEmail'] = $user->usersEmail;
             $_SESSION['usersEmpresa'] = $user->usersEmpresa;
             $_SESSION['usersPwd'] = $user->usersPwd;
             $_SESSION['usersSaldo'] = $user->usersSaldo;
             $_SESSION['type'] = $user->type;
-            $_SESSION['qntEmpregados'] = $this->ModeloEmpresa->qntEmpregados($_SESSION['Id']);
+            $_SESSION['qntEmpregados'] = $this->ModeloEmpresa->qntEmpregados($user->IdE);
             redirect("../../index.php");
         }
 

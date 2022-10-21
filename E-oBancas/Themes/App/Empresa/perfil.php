@@ -34,6 +34,7 @@
 
 <div class="list">
     <div class="title">Empresa</div>
+        <?php echo( $_SESSION['qntEmpregados']); ?>
         <input placeholder="Buscar" name="funcionario">
         <button id="show" onclick="empresa()">Funcionários</button>
         <div id="funcionarios"></div>
