@@ -16,9 +16,9 @@ class Empresa {
         $this->db->bind(':email', $email);
         $empresa = $this->db->single();
 
-        if($this->db->rowCount() > 0){
+        if($this->db->rowCount() > 0) {
             return $empresa;
-        }else{
+        }else {
             $this->db->query('SELECT * FROM funcionarios WHERE usersName = :username OR usersEmail = :email');
             $this->db->bind(':username', $username);
             $this->db->bind(':email', $email);
@@ -36,8 +36,8 @@ class Empresa {
 
     //Register User
     public function register($data) {
-        $this->db->query("INSERT INTO empresas (usersName, usersEmail, usersEmpresa, usersPwd, usersSaldo) 
-        VALUES (:name, :email, :empresa, :password, 0)");
+        $this->db->query("INSERT INTO empresas (usersName, usersEmail, usersEmpresa, usersPwd) 
+        VALUES (:name, :email, :empresa, :password)");
         //Bind values
         $this->db->bind(':name', $data['usersName']);
         $this->db->bind(':email', $data['usersEmail']);
@@ -52,10 +52,39 @@ class Empresa {
         }
     }
 
+    public function edit($data, $old) {
+
+        $this->db->query("UPDATE empresas SET usersName = :name WHERE usersName = :oldName");
+        $this->db->bind(':name', $data['editName']);
+        $this->db->bind(':oldName', $old['oldName']);
+        $this->db->execute();
+
+        $this->db->query("UPDATE empresas SET usersEmail = :email WHERE usersEmail = :oldEmail");
+        $this->db->bind(':email', $data['editEmail']);
+        $this->db->bind(':oldEmail', $old['oldEmail']);
+        $this->db->execute();
+
+        $this->db->query("UPDATE empresas SET usersEmpresa = :empresa WHERE usersEmpresa = :oldEmpresa");
+        $this->db->bind(':empresa', $data['editEmpresa']);
+        $this->db->bind(':oldEmpresa', $old['oldEmpresa']);
+        $this->db->execute();
+
+        $this->db->query("UPDATE empresas SET usersPwd = :password WHERE usersPwd = :oldPwd");
+        $this->db->bind(':password', $data['editPwd']);
+        $this->db->bind(':oldPwd', $old['oldPwd']);
+        $this->db->execute();
+        
+        //Execute
+        if($this->db->execute()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     //Login user
     public function login($nameOrEmail, $password) {
         $row = $this->findUser($nameOrEmail, $nameOrEmail);
-
         if($row == false) return false;
 
         $hashedPassword = $row->usersPwd;
@@ -110,18 +139,55 @@ class Empresa {
         }
     }
 
-    public function showAll($empresa) {
+    public function getEmpregados($empresa) {
         $this->db->query('SELECT * FROM funcionarios WHERE usersEmpresa = :empresa');
         $this->db->bind(':empresa', $empresa);
+        $empregados = $this->db->single();
 
-        //Check row
-        if($this->db->rowCount() > 0) {
-            $funcionarios = $this->db->resultSet();
-            echo json_encode($funcionarios);
+        if($this->db->rowCount() > 0){
+            return $empregados;
         }else{
             return false;
         }
     }
+
+    public function qntEmpregados($empresa) {
+        $this->db->query('SELECT * FROM funcionarios WHERE usersEmpresa = :empresa');
+        $this->db->bind(':empresa', $empresa);
+        $qntEmpregados = $this->db->rowCount();
+
+        if($qntEmpregados > 0){
+            return $qntEmpregados;
+        }else{
+            return false;
+        }
+    }
+
+
+
+    public function showAll($empresaUser) {
+        echo 'hdsfghbyihwsdfb';
+        $row = $this->findUser($empresaUser, $empresaUser);
+
+        if($row == false) return false;
+        if($row->type != 'empresa') return false;
+
+        $empresa = $row->idE;
+
+        $this->db->query('SELECT * FROM funcionarios WHERE usersEmpresa = :empresa');
+        $this->db->bind(':empresa', $empresa);
+        //Check row
+        $rows = $this->db->resultSet();
+        if($rows) {
+            return $rows;
+            //$funcionarios = $this->db->resultSet();
+            //echo json_encode($funcionarios);
+        }else{
+            return false;
+        }
+    }
+
+
 
     public function transfer($receptor, $doador, $valor) {
         $rowReceptor = $this->findUser($receptor, $receptor);
@@ -165,8 +231,8 @@ class Empresa {
         }
 
 
-        if($doneReceptor == true && $doneReceptor == true) {
-            return true;
+        if($doneReceptor == true && $doneDoador == true) {
+            return $contaNewSelf;
         } else{
             return false;
         }

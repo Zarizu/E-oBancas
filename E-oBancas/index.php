@@ -4,10 +4,10 @@
 
     if(isset($_SESSION['usersName'])) {
         switch($_SESSION['type']) {
-            case 'Empresa':
+            case 'empresa':
                 include_once './Themes/App/Empresa/perfil.php';
                 break;
-            case 'Funcionario':
+            case 'funcionario':
                 include_once './Themes/App/Funcionario/perfil.php';
                 break;
         }
@@ -15,6 +15,5 @@
         include_once './Themes/Web/header.php';
         echo '<h1 id="index-text">Bem vindo</h1></br>';
     }
-
     include_once './Themes/Web/footer.php'; 
 

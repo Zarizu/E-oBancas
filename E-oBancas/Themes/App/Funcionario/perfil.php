@@ -21,7 +21,7 @@
         <div class="list">
             <div class="title">Transferência</div> 
             <div class="coluna-2">Saldo</div>
-            <div class="coluna-2"><?php echo($_SESSION['usersSaldo']) ?></div>
+            <div class="coluna-2">R$ <?php echo($_SESSION['usersSaldo']) ?></div>
             <form method="post" action="./Source/Controllers/Empresas.php" id="transfer">
                 <input type="hidden" name="type" value="transfer">
                 <input placeholder="Buscar" name="receptor">

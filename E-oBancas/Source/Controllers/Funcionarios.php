@@ -76,7 +76,7 @@
 
             if(empty($data['funcionario']) || empty($data['usersPwd'])){
                 flash("login", "Preencha todos os campos");
-                header("location: ../../Themes/Web/Funcionario/login.php");
+                redirect($login);
                 exit();
             }
             //Check for user/email
@@ -97,14 +97,12 @@
         }
 
         public function createUserSession($user) {
-            $saldo = 'R$'.$user->usersSaldo;
-
-            $_SESSION['type'] = 'Funcionario';
             $_SESSION['Id'] = $user->usersId;
             $_SESSION['usersName'] = $user->usersName;
             $_SESSION['usersEmail'] = $user->usersEmail;
             $_SESSION['usersEmpresa'] = $user->usersEmpresa;
-            $_SESSION['usersSaldo'] = $saldo;
+            $_SESSION['usersSaldo'] = $user->usersSaldo;
+            $_SESSION['type'] = $user->type;
             redirect("../../index.php");
         }
 
@@ -114,6 +112,7 @@
             unset($_SESSION['usersEmail']);
             unset($_SESSION['usersEmpresa']);
             unset($_SESSION['usersSaldo']);
+            unset($_SESSION['type']);
             session_destroy();
             redirect("../../index.php");
         }

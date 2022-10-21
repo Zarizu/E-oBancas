@@ -19,37 +19,37 @@
                 'usersEmpresa' => $_POST['usersEmpresa'],
                 'usersPwd' => $_POST['usersPwd'],
             ];
-            $signup = '../../Themes/Web/Empresa/signup.php';
+            $home = '../../Themes/Web/Empresa/home.php';
             $login = '../../Themes/Web/Empresa/login.php';
 
             //Validate inputs
             if(empty($data['usersName']) || empty($data['usersEmail']) || empty($data['usersEmpresa']) || empty($data['usersPwd'])){
                 flash("register", "Preencha todos os campos");
-                redirect($signup);
+                redirect($home);
             }
             /*
             if(!preg_match("/^[a-zA-Z0-9]*$/", $data['usersEmpresa'])){
                 flash("register", "Invalid username");
-                redirect($signup);
+                redirect($home);
             }
 
             if(!filter_var($data['usersEmail'], FILTER_VALIDATE_EMAIL)){
                 flash("register", "Invalid email");
-                redirect($signup);
+                redirect($home);
             }
             
             if(strlen($data['usersPwd']) < 6){
                 flash("register", "Invalid password");
-                redirect($signup);
+                redirect($home);
             } else if($data['usersPwd'] !== $data['pwdRepeat']){
                 flash("register", "Passwords don't match");
-                redirect($signup);
+                redirect($home);
             }*/
         
             //User with the same email or password already exists
             if($this->ModeloEmpresa->findUser($data['usersEmail'], $data['usersName'])){
                 flash("register", "Nome ou Email já estão sendo usados");
-                redirect($signup);
+                redirect($home);
             }
 
             //Passed all validation checks.
@@ -65,18 +65,63 @@
             }
         }
 
+        public function edit() {
+            //Init data
+            $data = [
+                'editName' => $_POST['editName'],
+                'editEmail' => $_POST['editEmail'],
+                'editEmpresa' => $_POST['editEmpresa'],
+                'editPwd' => $_POST['editPwd']
+            ];
+            $old = [
+                'oldName' => $_SESSION['usersName'],
+                'oldEmail' => $_SESSION['usersEmail'],
+                'oldEmpresa' => $_SESSION['usersEmpresa'],
+                'oldPwd' => $_SESSION['usersPwd']
+            ];
+            $home = "../../index.php";
+            $oldUser = $this->ModeloEmpresa->findUser($_SESSION['usersName'], $_SESSION['usersName']);
+
+            if(empty($data['editName']) || empty($data['editEmail']) || empty($data['editEmpresa']) || empty($data['editPwd'])){
+                flash("edit", "Preencha todos os campos");
+            }
+        
+            if($this->ModeloEmpresa->findUser($data['editEmail'], $data['editName'])){
+                flash("edit", "Nome ou Email já estão sendo usados");
+            }
+
+            $data['editPwd'] = password_hash($data['editPwd'], PASSWORD_DEFAULT);
+            $oldPwd = $oldUser->usersPwd;
+            if($oldPwd == $data['editPwd']) {
+                flash("edit", "Use uma senha diferente");
+            }
+
+
+            if($this->ModeloEmpresa->edit($data, $old)) {
+                $_SESSION['usersName'] = $data['editName'];
+                $_SESSION['usersEmail'] = $data['editEmail'];
+                $_SESSION['usersEmpresa'] = $data['editEmpresa'];
+                $_SESSION['usersPwd'] = $data['editPwd'];
+                redirect($home);
+            }else {
+                die("Algo deu errado");
+            }
+            
+        }
+        
+
         public function login() {
             //Init data
             $data=[
                 'name/email' => $_POST['name/email'],
                 'usersPwd' => $_POST['usersPwd']
             ];
-            $login = '../../Themes/Web/Empresas/login.php';
+            $login = '../../Themes/Web/Empresa/login.php';
 
 
             if(empty($data['name/email']) || empty($data['usersPwd'])){
                 flash("login", "Preencha todos os campos");
-                header("location: ../../Themes/Web/login.php");
+                redirect($login);
                 exit();
             }
             //Check for user/email
@@ -97,15 +142,14 @@
         }
 
         public function createUserSession($user) {
-            $saldo = 'R$'.$user->usersSaldo;
-            
-            $_SESSION['type'] = 'Empresa';
             $_SESSION['Id'] = $user->usersId;
             $_SESSION['usersName'] = $user->usersName;
             $_SESSION['usersEmail'] = $user->usersEmail;
             $_SESSION['usersEmpresa'] = $user->usersEmpresa;
             $_SESSION['usersPwd'] = $user->usersPwd;
-            $_SESSION['usersSaldo'] = $saldo;
+            $_SESSION['usersSaldo'] = $user->usersSaldo;
+            $_SESSION['type'] = $user->type;
+            $_SESSION['qntEmpregados'] = $this->ModeloEmpresa->qntEmpregados($_SESSION['Id']);
             redirect("../../index.php");
         }
 
@@ -114,8 +158,8 @@
             unset($_SESSION['usersName']);
             unset($_SESSION['usersEmail']);
             unset($_SESSION['usersEmpresa']);
-            unset($_SESSION['usersPwd']);
             unset($_SESSION['usersSaldo']);
+            unset($_SESSION['type']);
             session_destroy();
             redirect("../../index.php");
         }
@@ -143,8 +187,11 @@
         }
 
         public function showAll() {
-            $empresa = $_SESSION['usersEmpresa'];
-            $this->ModeloEmpresa->showAll($empresa);
+            $empresaUser = $_SESSION['usersName'];
+            $rows = $this->ModeloEmpresa->showAll($empresaUser);
+
+
+
         }
 
         public function transfer() {
@@ -171,11 +218,11 @@
                     redirect($home);
                     exit();
                 }
-                if($this->ModeloEmpresa->transfer($data['receptor'], $data['doador'], $data['valor'])) {
-                    flash("transfer", "Transação concluída");
-                    redirect($home);
-                    exit();
-                }
+                $transfer = $this->ModeloEmpresa->transfer($data['receptor'], $data['doador'], $data['valor']);
+                $_SESSION['usersSaldo'] = $transfer;
+                flash("transfer", "Transação concluída");
+                redirect($home);
+                exit();
             } else {
                 flash("transfer", "Esse usuário não existe");
                 redirect($home);
@@ -194,6 +241,9 @@
                 break;
             case 'login':
                 $init->login();
+                break;
+            case 'edit':
+                $init->edit();
                 break;
             case 'fireUser':
                 $init->fireUser();
