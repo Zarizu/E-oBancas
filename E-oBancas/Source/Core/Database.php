@@ -1,83 +1,60 @@
 <?php
-/*
-    * PDO Database Class
-    * Connect to database
-    * Create prepared statements
-    * Bind values
-    * Return rows and results
-*/
+
+namespace Source\Core;
+
 class Database {
-    private $host = 'localhost';
-    private $user = 'root';
-    private $pass = '';
-    private $dbname = 'e-obancas';
+    private const OPTIONS = [
+        \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ,
+        \PDO::ATTR_CASE => \PDO::CASE_NATURAL
+    ];
 
-    //Will be the PDO object
-    private $dbh;
-    private $stmt;
-    private $error;
+    private static $instance = NULL;
+    private static $config = NULL;
 
-    public function __construct(){
-        //Set DSN
-        $dsn = 'mysql:host='.$this->host.';dbname='.$this->dbname;
-        $options = array(
-            PDO::ATTR_PERSISTENT => true,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        );
+    public function __construct() {
+        return $this;
+    }
 
-        //Create PDO instance
-        try{
-            $this->dbh = new PDO($dsn, $this->user, $this->pass, $options);
-        }catch(PDOException $e){
-            $this->error = $e->getMessage();
-            echo $this->error;
+    public static function getInstance() {
+        if (self::$instance) {
+            return self::$instance;
         }
-    }
 
-    //Prepare statement with query
-    public function query($sql) {
-        $this->stmt = $this->dbh->prepare($sql);
-    }
-
-    //Bind values, to prepared statement using named parameters
-    public function bind($param, $value, $type = null) {
-        if(is_null($type)){
-            switch(true){
-                case is_int($value):
-                    $type = PDO::PARAM_INT;
-                    break;
-                case is_bool($value):
-                    $type = PDO::PARAM_BOOL;
-                    break;
-                case is_null($value):
-                    $type = PDO::PARAM_NULL;
-                    break;
-                default:
-                    $type = PDO::PARAM_STR;
-            }
+        if (!self::$config) {
+            $file = file_get_contents(__DIR__ ."/../../config.json");    
+            self::$config = json_decode($file)->mysql;
         }
-        $this->stmt->bindValue($param, $value, $type);
+
+        try {
+            self::$instance = new \PDO(
+                "mysql:host=" . self::$config->host . ";dbname=" . self::$config->database,
+                self::$config->user,
+                self::$config->password,
+                self::OPTIONS
+            );
+        } catch (\PDOException $exception) {
+            echo "Problemas ao Conectar...";
+            echo $exception;
+            return false;
+        }
+
+        return self::$instance;
     }
 
-    //Execute the prepared statement
-    public function execute() {
-        return $this->stmt->execute();
+    public function execute($query, $args) {
+        $stmt = self::getInstance()->prepare($query);
+        $stmt->execute($args);
+        return $stmt;
     }
 
-    //Return multiple records
-    public function resultSet() {
-        $this->execute();
-        return $this->stmt->fetchAll(PDO::FETCH_OBJ);
+    public function getLastId() {
+        return self::getInstance()->lastInsertId();
     }
 
-    //Return a single record
-    public function single() {
-        $this->execute();
-        return $this->stmt->fetch(PDO::FETCH_OBJ);
-    }
-
-    //Get row count
-    public function rowCount() {
-        return $this->stmt->rowCount();
+    public function queryAll($query, $args) {
+        $stmt = $this->execute($query, $args);
+        return $stmt->fetchAll();
     }
 }
