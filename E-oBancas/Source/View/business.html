@@ -2,8 +2,8 @@
 <html lang="en" dir="ltr">
    <head>
       <meta charset="utf-8">
-      <title>E-oBancas | Main Menu</title>
-      <link rel="stylesheet" href="Source/View/css/style-profile.css">
+      <title>E-oBancas | Empresa</title>
+      <link rel="stylesheet" href="Source/View/css/style-business.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
       <script type="module" src="Source/View/js/profile.js" async></script>
    </head>
@@ -15,10 +15,12 @@
          <i class="fas fa-times"></i>
          </label>
          <nav id="sidebar">
-            <div class="title">E-oBancas</div>
+            <div class="title">
+               Side Menu
+            </div>
             <ul class="list-items">
-               <li><a href="home"><i class="fas fa-home"></i>Home</a></li>
-               <li><a href="perfil"><i class="fas fa-user"></i>Perfil</a></li>
+                <li><a href="perfil"><i class="fas fa-user"></i>Conta</a></li>
+                <li><a href="home"><i class="fas fa-sign-out-alt" id="logout"></i>Sair</a></li>
                <div class="icons">
                   <a href="https://github.com/Zarizu/E-oBancas"><i class="fab fa-github"></i></a>
                   <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"><i class="fab fa-youtube"></i></a>
@@ -27,16 +29,16 @@
          </nav>
       </div>
       <div class="content">
-         <div class="postbox">
-            <div class="header">Teste</div></br>
-            <input id="user" placeholder="Testar"></br>
-            <button id="teste">Teste</button>
-            <span id="message-teste"></span>
-            <label id="info" hidden>A</label>
+         <div class="header">
+            Empresa
          </div>
-
-         <div class="postbox" id="empresa"></div>
-
+         <div class="alario">
+            <div class="header">Registro</div>
+            <label>Nome: <input id="username"></label></br>
+            <label>Email: <input id="email"></label></br>
+            <label>Senha: <input id="password"></label></br>
+            <button id="register">Cadastrar</button>
+         </div>
       </div>
    </body>
 </html>

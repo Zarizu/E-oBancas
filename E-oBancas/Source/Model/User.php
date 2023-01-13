@@ -7,12 +7,17 @@ class User {
     private $username;
     private $email;
     private $password;
+    private $business;
+    private $boss;
+    private $cash;
+    private $db;
+
 
     public function __construct(
-        ?int $id = NULL,
-        ?string $username = NULL, 
-        ?string $email = NULL,
-        ?string $password = NULL
+        int $id = NULL,
+        string $username = NULL, 
+        string $email = NULL,
+        string $password = NULL
     )
     {
         $this->id = $id;
@@ -33,7 +38,7 @@ class User {
         $this->id = $user->id;
         $this->username = $user->username;
         $this->email = $user->email;
-        $this->cash = $user->cash;
+        $this->cash = $this->getCash($this->id);
 
         return $this;
     }
@@ -46,24 +51,22 @@ class User {
         return $this->email;
     }
 
-    public function getCash($user) {
-        $query = "SELECT cash FROM users WHERE email = :user OR username = :user";
-        $stmt = $this->db->execute($query, ["user" => $user]);
+    public function getCash($id) {
+        $query = "SELECT cash FROM users WHERE id = :id";
+        $stmt = $this->db->execute($query, ["id" => $id]);
         return $stmt;
     }
-
-
-    public function checkUser($user) {
-        $query = "SELECT * FROM users WHERE email = :user OR username = :user";
-        $stmt = $this->db->execute($query, ["user" => $user]);
-        if($stmt->rowCount() == 0) return ["result" => false];
-        return [
-            "id" => $this->id,
-            "username" => $this->username,
-            "email" => $this->email,
-            "result" => true
-        ];
+    public function getBusiness($id) {
+        $query = "SELECT (business,boss) FROM users WHERE id = :id";
+        $stmt = $this->db->execute($query, ["id" => $id]);
+        if($stmt->rowCount() == 0) return false;
+        
+        $user = $stmt->fetch();
+        $this->business = $user->business;
+        $this->boss = $user->boss;
+        return $this;
     }
+
 
     public static function getAll() {
         $query = "SELECT * FROM users";
@@ -85,7 +88,19 @@ class User {
         ];
     }
 
-    public function insert() {
+    public function checkUser($user) {
+        $query = "SELECT * FROM users WHERE email = :user OR username = :user";
+        $stmt = $this->db->execute($query, ["user" => $user]);
+        if($stmt->rowCount() == 0) return ["result" => false];
+        return [
+            "id" => $this->id,
+            "username" => $this->username,
+            "email" => $this->email,
+            "result" => true
+        ];
+    }
+
+    public function register() {
         if($this->checkUser($this->email)['result'] || $this->checkUser($this->username)['result']) return [
             "error" => "used",
             "result" => false
@@ -99,68 +114,73 @@ class User {
         ]);
 
         $this->id = $this->db->getLastId();
-        return ["user" => $this, "result" => true];
+        return ["user" => $stmt->fetch(), "result" => true];
     }
 
     public function login() {
-        $query = "SELECT * FROM users WHERE email = :email OR username = :username";
-        $stmt = $this->db->execute($query, ["email" => $this->email, "username" => $this->username]);
+        $query = "SELECT * FROM users WHERE email = :email";
+        $stmt = $this->db->execute($query, ["email" => $this->email]);
+        $user = $stmt->fetch();
         if($stmt->rowCount() == 0) return [
             "error" => 'username',
-            "logged" => false
+            "logged" => false,
+            "teste" => $this->email,
+        ];
+        else return [
+            "id" => $user->id,
+            "logged" => true,
+            "info" => $user,
         ];
 
 
         $user = $stmt->fetch();
-        if (!password_verify($this->password, $user->password)) return [
+        if (password_verify($this->password, $user->password)) $resp =[
+            "id" => $user->id,
+            "logged" => true,
+            "teste" => $user,
+        ];
+        else $resp =[
             "error" => 'password',
             "logged" => false,
-            "teste" => $user
+            "senha" => password_hash($this->password, PASSWORD_DEFAULT),
+            "senhaUser" => $user->password,
         ];
-        
-        if (password_verify($this->password, $user->password)) return [
-            "id" => $user->id,
-            "username" => $user->username,
-            "logged" => true,
-        ];
+
+        return $resp;
     }
 
-    public function nameEdit($username) {
-        $query = "UPDATE users SET username = :username WHERE username = :old";
-        $stmt = $this->db->execute($query, ["username" => $this->username, "old" => $username]);
-        return ["username" => $username, "result" => true];
-    }
+    public function update() {
+        $fields = [];
 
-    public function emailEdit($email) {
-        $query = "UPDATE users SET email = :email WHERE email = :old";
-        $stmt = $this->db->execute($query, ["email" => $this->email, "old" => $email]);
-        return ["email" => $email, "result" => true];
+        if (isset($this->username)) {
+            $fields[] = [
+                "name" => "username",
+                "value" => $this->username
+            ];
+        }
+        if (isset($this->email)) {
+            $fields[] = [
+                "name" => "email",
+                "value" => $this->email
+            ];
+        }
+        if (isset($this->password)) {
+            $fields[] = [
+                "name" => "password",
+                "value" => $this->password
+            ];
+        }
 
-    }
-
-    public function pwdEdit($password) {
-        $hash =password_hash($password, PASSWORD_DEFAULT);
-        $query = "UPDATE users SET password = :password WHERE password = :old";
-        $stmt = $this->db->execute($query, ["password" => $this->password, "old" => $hash]);
-        return ["username" => $hash, "result" => true];
-
-    }
-
-    public function transfer($sent, $receive) {
-        $receive = $this->checkUser($receive);
-        $self = $this->getCash($this->email);
-
-        if(!$receive['result']) return "Usuário não existe";
-        if($sent > $self) return "Dinheiro insuficiente";
-
-        
-        $cash = $receive['cash'] + $sent;
-        $query = "UPDATE users SET cash = :cash WHERE email = :user OR username = :user";
-        $stmt = $this->db->execute($query, ["cash" => $cash, "user" => $receive]);
-
-        $cashSelf = $self - $sent;
-        $querySelf = "UPDATE users SET cash = :cash WHERE email = :user OR username = :user";
-        $stmt = $this->db->execute($querySelf, ["cash" => $cashSelf, "user" => $this->email]);
-        return "Transação concluída";
+        foreach($fields as $field) {
+            $fieldName = $field["name"];
+            $value = $field["value"];
+            $sql = "UPDATE users SET $fieldName = :value WHERE id = :id";
+            $stmt = $this->db->execute($sql, [
+                "value" => $value,
+                "id" => $this->id
+            ]);
+        }
+        $this->getById();
+        return $this;
     }
 }

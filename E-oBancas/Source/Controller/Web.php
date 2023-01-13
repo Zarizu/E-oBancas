@@ -15,33 +15,27 @@ class Web {
     public function register() {
         $this->view->render('register', []);
     }
-/*
+
     public function profile() {     
         session_start();
         if (!isset($_SESSION["user"])) {
             header("Location:home");
             return;
-        }
-
+        } else $this->view->render('profile', []);
+/*
         $user = new \Source\Model\User($_SESSION["user"]->getInfo()["id"]);
         $user->getById();
 
         $this->view->render('profile', [
             "name" => $user->getName(),
             "email" => $user->getEmail()
-        ]);
-    }*/
-
-    public function profile() {     
-        $this->view->render('profile', []);
+        ]);*/
     }
 
-    public function info() {
-        $this->view->render('info', []);
-    }
     public function bank() {
         $this->view->render('bank', []);
     }
+
     public function business() {
         $this->view->render('business', []);
     }

@@ -11,7 +11,8 @@ require __DIR__ . "/vendor/autoload.php";
 require __DIR__ . "/Source/autoload.php";
 
 use CoffeeCode\Router\Router;
-$router = new Router("");
+//$router = new Router("http://localhost");
+$router = new Router("http://localhost");
 
 // controller routes
 $router->namespace("Source\Controller");
@@ -27,12 +28,26 @@ $router->get("/perfil", "Web:profile");
 
 
 // api routes
-$router->post("/login", "Api:login");
-$router->delete("/logout", "Api:logout");
-$router->post("/register", "Api:register");
+$router->post("/user", "Api:register");
+$router->delete("/user", "Api:logout");
 
 $router->get("/users", "Api:getAll");
-$router->get("/users/{id}", "Api:get");
+$router->get("/user/{id}", "Api:get");
+
+$router->post("/user/login", "Api:login");
+$router->put("/users/{id}", "Api:get");
+
+$router->post("/empresa", "Api:register");
+$router->delete("/empresa", "Api:logout");
+
+$router->get("/empresas", "Api:getAll");
+$router->get("/empresa/{id}", "Api:get");
+
+$router->post("/empresa/login", "Api:login");
+$router->put("/empresas/{id}", "Api:get");
+
+
+
 
 
 $router->dispatch();

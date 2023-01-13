@@ -163,11 +163,16 @@ html,body{
   font-weight: 700;
 }
 
-.alario {
+.postbox {
   font-size: 18px;
   margin-left: 300px;
   height: 200px;
   width: 350px;
   background-color: rgba(255, 255, 255, 0.674);
-  border-radius: 30%;
+  border: #202020 solid 1px;
+  border-radius: 3%;
+}
+.postbox button {
+  width: 50%;
+  height: 40px;
 }

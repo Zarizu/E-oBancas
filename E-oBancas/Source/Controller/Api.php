@@ -27,39 +27,15 @@ class Api {
                 $data[] = $user->getInfo();
             }
         }
-
         echo json_encode($data);
-    }
-
-    public function login($data) {
-        header('Content-Type: application/json;');
-        if (!$data || !$data["user"] || !$data["password"]) $output["message"] = "Preencha todos os campos";
-        else {
-            $user = new \Source\Model\User(NULL, NULL, $data["user"], $data["password"]);
-            $login = $user->login();
-    
-            if ($login['logged']) {
-                session_start();
-                $_SESSION["user"] = $login['id'];
-                $output = $login;
-                echo json_encode($output);
-                exit();
-            }
-    
-            if ($login['error'] == 'username') $output['message'] = 'Usuário não encontrado';
-            if ($login['error'] == 'password') $output['message'] = $login['teste'];//'Senha incorreta';
-        }
-
-
-        echo json_encode($output);
     }
 
     public function register($data) {
         header('Content-Type: application/json;');
-        if (!$data || !$data["email"] || !$data["password"] || !$data["username"]) $output["message"] = "Preencha todos os campos";
+        if (!$data || !$data["username"] ||!$data["email"] || !$data["password"]) $output["message"] = "Preencha todos os campos";
         else {
             $user = new \Source\Model\User(NULL, $data["username"], $data["email"], $data["password"]);
-            $register = $user->insert();
+            $register = $user->register();
             if($register['result']) {
                 $output["user"] = $user->getInfo();
                 $output['message'] = 'Concluído';
@@ -69,49 +45,56 @@ class Api {
 
             if ($register['error'] == 'used') $output['message'] = 'Usuário já existe';
         }
-
         echo json_encode($output);
     }
 
-    public function editInfo($data) {
+    public function login($data) {
         header('Content-Type: application/json;');
-        if (!$data || !$data["username"] || !$data["email"]  || !$data["password"]) {
-            $output["message"] = "Sem alterações";
-            echo json_encode($output);
-        } 
-    
-        
-        $userName = new \Source\Model\User(NULL, NULL, $data["email"], NULL);
-        $userEmail = new \Source\Model\User(NULL, $data["username"], NULL , NULL);
-        $userPWd = new \Source\Model\User(NULL, NULL, NULL , $data["password"]);
-
-
-        if($this->username != $data["username"]) $username = $userName->nameEdit($data["username"]);
-        if($this->email != $data["email"]) $email = $userEmail->nameEdit($data["email"]);
-        if($this->password != $data["password"]) $pwd = $userPWd->nameEdit($data["password"]);
-            
-    
-        if ($username['result'] && $email['result'] && $pwd['result']) {
-            $output['message'] = 'Informações atualizadas com sucesso';
-            echo json_encode($output);
-            exit();
-        } else {
-            $output['message'] = 'Coloque valores diferentes';
-            echo json_encode($output);
-        }
-    }
-
-    public function transfer($data) {
-        header('Content-Type: application/json;');
-        if (!$data || !$data["send"] || !$data["receive"]) $output["message"] = "Preencha todos os campos";
+        if (!$data || !$data["email"] || !$data["password"]) $output["message"] = "Preencha todos os campos";
         else {
-            $user = new \Source\Model\User();
-            $transfer = $user->transfer($data["send"], $data["receive"]);
-            $output["message"] = $transfer;
+            $user = new \Source\Model\User(NULL, NULL, $data["email"], $data["password"]);
+            $login = $user->login();
+    
+            if ($login['logged']) {
+                session_start();
+                $_SESSION["user"] = $login['id'];
+                $output = $login['info'];
+                echo json_encode($output);
+                exit();
+                
+            }
+            $output = [];
+            if ($login['error'] == 'username') $output['message'] = $login;'Usuário não encontrado';
+            if ($login['error'] == 'password') $output['message'] = $login;//'Senha incorreta';
             echo json_encode($output);
         }
     }
 
+    public function update($data) {
+        header('Content-Type: application/json;');
+        if (!$data || !isset($data["id"])) {
+            $output = [ "error" => "Must inform a product id" ];
+        }
+        else {
+            $data["name"] =  isset($data["name"]) ? $data["name"] : null;
+            $data["description"] =  isset($data["description"]) ? $data["description"] : null;
+            $data["price"] =  isset($data["price"]) ? $data["price"] : null;
+            $data["quantity"] =  isset($data["quantity"]) ? $data["quantity"] : null;
+            
+            $product = new \Source\Model\User($data["id"], $data["name"], $data["description"], $data["price"], $data["quantity"]);
+            $resp = $product->update();
+
+            if (!$resp) {
+                echo json_encode([ "error" => "Not found" ]);
+                return;
+            }
+
+            // $output["a"] = $a;
+            $output["product"] = $product->getInfo();
+        }
+
+        echo json_encode($output);
+    }
 
     public function logout() {
         session_start();

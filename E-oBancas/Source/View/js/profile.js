@@ -1,63 +1,35 @@
-// const templateVars = {};
-// document.querySelectorAll('.template-vars').forEach(e => {
-//     templateVars[e.id] = e.value;
-//     e.remove();
-// });
+import { User } from './user.js';
+import { Empresa } from './empresa.js';
 
 
-// document.querySelector('#name').innerHTML = templateVars.name;
-// document.querySelector('#email').innerHTML = templateVars.email;
+async function main() {
+    const button = document.getElementById('teste');
 
-import { request, alerta } from './utils.js';
+    button.addEventListener('click', async () => {
+        const email = document.getElementById('user').value;
+        const newUser = new User(email);
+        const login = await newUser.login();
+        console.log(login);
+        document.getElementById("info").innerHTML = JSON.stringify(login);
 
-const edit = document.getElementById('edit');
-const send = document.getElementById('send');
 
+        if(login.business == 0) {
+            document.getElementById("empresa").innerHTML = `
+                <div class="header">Empresa</div></br>
+                <input id="business" placeholder="Nova Empresa"></br>
+                <button id="business">+</button>`;
+            document.getElementById("message-teste").innerHTML = "Desempregado";
 
+        }
+        if(login.business > 0 && login.boss == 0) {
+            document.getElementById("message-teste").innerHTML = "Empregado";
+            const newEmpresa = new Empresa(login.id);
+            const empresa = await newEmpresa.get();
 
-edit.addEventListener('click', async () => {
-    const name = document.getElementById('username');
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
+        }
+        if(login.business > 0 && login.boss == 1) document.getElementById("message-teste").innerHTML = "Chefe";
 
-    const data = await request(`register`, {
-        method: 'POST',
-        body: {
-            username: name.value,
-            email: email.value,
-            password: password.value,
-        },
     });
-    const alert = new alerta(data);
-    alert.activeAlert();
-    console.log(data);
-});
+}
+main();
 
-
-send.addEventListener('click', async () => {
-    const user = document.getElementById('receive');
-    const password = document.getElementById('send');
-
-    const data = await request(`login`, {
-        method: 'POST',
-        body: {
-            user: user.value,
-            password: password.value,
-        },
-    });
-    const alert = new alerta(data);
-    alert.activeAlert();
-    console.log(data);
-
-});
-
-const btn = document.querySelector('.btnTeste');
-btn.addEventListener('click', () => {
-  const alert = new alerta('status');
-  alert.activeAlert();
-});
-
-document.getElementById('logout').addEventListener('click', () => {
-    request('logout', { method: "DELETE" });
-    window.location.reload();
-});
