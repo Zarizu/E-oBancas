@@ -1,8 +1,0 @@
-{
-    "mysql": {
-        "host": "localhost",
-        "database": "e-obancas",
-        "user": "root",
-        "password": ""
-    }
-}
