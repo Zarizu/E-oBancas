@@ -18,18 +18,11 @@ class Web {
 
     public function profile() {     
         session_start();
-        if (!isset($_SESSION["user"])) {
-            header("Location:home");
+        if (isset($_SESSION["user"])) {
+            $this->view->render('profile', []);
             return;
-        } else $this->view->render('profile', []);
-/*
-        $user = new \Source\Model\User($_SESSION["user"]->getInfo()["id"]);
-        $user->getById();
-
-        $this->view->render('profile', [
-            "name" => $user->getName(),
-            "email" => $user->getEmail()
-        ]);*/
+        }
+        header("Location:home");        
     }
 
     public function bank() {

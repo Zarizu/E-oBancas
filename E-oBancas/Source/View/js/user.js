@@ -5,26 +5,42 @@ class User {
     #username = null;
     #email = null;
     #password = null;
+    #cash = null;
+    #business = null;
+    #boss = null;
+
 
     constructor({
         id = null,
         username = null,
         email = null,
         password = null,
-    }) {
+        cash = null,
+        business = null,
+        boss = null,
+    }){
         this.#id = id;
         if (username && username != '') this.#username = username;
         if (email && email != '') this.#email = email;
         if (password && password != '') this.#password = password;
+        if (cash && cash != '') this.#cash = cash;
+        if (business && business != '') this.#business = business;
+        if (boss && boss != '') this.#boss = boss;
     }
 
     static async getAll() {
-        return request('users');
+        return request('Users');
     }
 
     async get() {
         const id = this.#id;
-        const resp = await request(`user/${id}`);
+        const resp = await request(`users/${id}`);
+        return resp;
+    }
+
+    async getBusiness() {
+        const business = this.#business;
+        const resp = await request(`empresa/${business}`);
         return resp;
     }
 
@@ -34,7 +50,7 @@ class User {
             email: this.#email,
             password: this.#password,
         }
-        const resp = await request('user', { method: 'POST', body: body });
+        const resp = await request('register', { method: 'POST', body: body });
         if (resp.id) this.#id = resp.id;
         return resp;
     }
@@ -44,21 +60,23 @@ class User {
             email: this.#email,
             password: this.#password,
         }
-        console.log(body);
-        const resp = await request('/user/login', { method: 'POST', body: body });
+        const resp = await request('login', { method: 'POST', body: body });
         if (resp.id) this.#id = resp.id;
         return resp;
     }
 
     async update() {
         const id = this.#id;
-        const body = {
-            username: this.#username,
-            email: this.#email,
-            password: this.#password,
-        }
+        const body = {};
+
+        if (this.#username) 
+        body.username = this.#username;
+        if (this.#email) 
+        body.email = this.#email;
+        if (this.#password) 
+        body.password = this.#password;
         
-        const resp = await request(`user/${id}`, { method: 'PUT', body: body });
+        const resp = await request(`update/${id}`, { method: 'PUT', body: body });
         return resp;
     }
 

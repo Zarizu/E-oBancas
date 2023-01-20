@@ -21,31 +21,33 @@ $router->get("/", "Web:home");
 $router->get("/home", "Web:home");
 $router->get("/registro", "Web:register");
 $router->get("/perfil", "Web:profile");
+$router->get("/empresas", "Web:business");
 /*
     $router->get("/perfil", "Web:profile");
     $router->get("/cache", "Web:bank");
     $router->get("/empresa", "Web:business");*/
 
 
-// api routes
-$router->post("/user", "Api:register");
-$router->delete("/user", "Api:logout");
+// api users routes
+$router->post("/login", "Api:login");
+$router->post("/register", "Api:register");
 
 $router->get("/users", "Api:getAll");
 $router->get("/user/{id}", "Api:get");
+$router->get("/user/{business}", "Api:getUserBusiness");
 
-$router->post("/user/login", "Api:login");
-$router->put("/users/{id}", "Api:get");
+$router->put("/update/{id}", "Api:update");
+$router->delete("/logout", "Api:logout");
 
-$router->post("/empresa", "Api:register");
-$router->delete("/empresa", "Api:logout");
 
-$router->get("/empresas", "Api:getAll");
-$router->get("/empresa/{id}", "Api:get");
+// api business routes
+$router->post("/create", "Api:create");
 
-$router->post("/empresa/login", "Api:login");
-$router->put("/empresas/{id}", "Api:get");
+$router->get("/business", "Api:getAllBusiness");
+$router->get("/business/{id}", "Api:getBusiness");
 
+$router->put("/update/{id}", "Api:update");
+$router->delete("/delete", "Api:delete");
 
 
 

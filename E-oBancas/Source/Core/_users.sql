@@ -29,7 +29,7 @@ ALTER TABLE business ADD founder varchar(45) DEFAULT '';
 ALTER TABLE business ADD color varchar(45) DEFAULT 'white';
 ALTER TABLE business ADD worth int(45) DEFAULT 0;
 
-INSERT INTO business (id, name, slogan) VALUES
-(3, 'Sistema Solar', 'Onde tem os planetas e tals'),
-(4, 'Terra', 'Moradia da humanidade');
+INSERT INTO business (id, name, slogan, founder) VALUES
+(3, 'Sistema Solar', 'Onde tem os planetas e tals', "sol@sol"),
+(4, 'Terra', 'Moradia da humanidade', "homem@homem");
 

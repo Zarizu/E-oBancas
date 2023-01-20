@@ -38,35 +38,12 @@ class User {
         $this->id = $user->id;
         $this->username = $user->username;
         $this->email = $user->email;
-        $this->cash = $this->getCash($this->id);
-
-        return $this;
-    }
-
-    public function getName() {
-        return $this->username;
-    }
-
-    public function getEmail() {
-        return $this->email;
-    }
-
-    public function getCash($id) {
-        $query = "SELECT cash FROM users WHERE id = :id";
-        $stmt = $this->db->execute($query, ["id" => $id]);
-        return $stmt;
-    }
-    public function getBusiness($id) {
-        $query = "SELECT (business,boss) FROM users WHERE id = :id";
-        $stmt = $this->db->execute($query, ["id" => $id]);
-        if($stmt->rowCount() == 0) return false;
-        
-        $user = $stmt->fetch();
+        $this->cash = $user->cash;
         $this->business = $user->business;
         $this->boss = $user->boss;
+
         return $this;
     }
-
 
     public static function getAll() {
         $query = "SELECT * FROM users";
@@ -75,35 +52,50 @@ class User {
 
         $users = [];
         while($user = $stmt->fetch()) {
-            $users[] = new User($user->id, $user->username, $user->email, NULL);
+            $users[] = new User(
+                $user->id,
+                $user->username, 
+                $user->email, 
+                NULL,
+                $user->business,
+                $user->boss,
+                $user->cash,
+            );
         }
         return $users;
+    }
+
+    public function getBusiness() {
+        $query = "SELECT * FROM business WHERE id = :business";
+        $stmt = $this->db->execute($query, ["id" => $this->business]);
+        if($stmt->rowCount() == 0) return false;
+        
+        $user = $stmt->fetch();
+        
+        return [
+            "id" => $user->id,
+            "name" => $user->name,
+            "slogan" => $user->slogan,
+            "worth" => $user->worth,
+            "founder" => $user->founder,
+            "color" => $user->color,
+        ];
     }
 
     public function getInfo() {
         return [
             "id" => $this->id,
             "username" => $this->username,
-            "email" => $this->email
-        ];
-    }
-
-    public function checkUser($user) {
-        $query = "SELECT * FROM users WHERE email = :user OR username = :user";
-        $stmt = $this->db->execute($query, ["user" => $user]);
-        if($stmt->rowCount() == 0) return ["result" => false];
-        return [
-            "id" => $this->id,
-            "username" => $this->username,
             "email" => $this->email,
-            "result" => true
         ];
     }
 
     public function register() {
-        if($this->checkUser($this->email)['result'] || $this->checkUser($this->username)['result']) return [
+        $query = "SELECT * FROM users WHERE email = :email";
+        $stmt = $this->db->execute($query, ["email" => $this->email]);
+        if(!$stmt->rowCount() == 0) return [
+            "result" => false,
             "error" => "used",
-            "result" => false
         ];
 
         $query = "INSERT INTO users(username, email, password) VALUES (:username, :email, :password)";
@@ -132,21 +124,19 @@ class User {
             "info" => $user,
         ];
 
-
         $user = $stmt->fetch();
-        if (password_verify($this->password, $user->password)) $resp =[
+        if (password_verify($this->password, $user->password)) return[
             "id" => $user->id,
             "logged" => true,
             "teste" => $user,
+            "senha" => $this->password,
         ];
-        else $resp =[
+        else return[
             "error" => 'password',
             "logged" => false,
-            "senha" => password_hash($this->password, PASSWORD_DEFAULT),
+            "senha" => $this->password,
             "senhaUser" => $user->password,
         ];
-
-        return $resp;
     }
 
     public function update() {
@@ -174,13 +164,15 @@ class User {
         foreach($fields as $field) {
             $fieldName = $field["name"];
             $value = $field["value"];
-            $sql = "UPDATE users SET $fieldName = :value WHERE id = :id";
-            $stmt = $this->db->execute($sql, [
+            $query = "UPDATE users SET $fieldName = :value WHERE id = :id";
+            $stmt = $this->db->execute($query, [
                 "value" => $value,
                 "id" => $this->id
             ]);
+            if($stmt->rowCount() == 0) return["result" => false];
         }
+        
         $this->getById();
-        return $this;
+        return["result" => $this];
     }
 }

@@ -1,6 +1,6 @@
 {
     "require": {
-        "coffeecode/router": "^1.0.8",
+        "coffeecode/router": "^2.0",
         "mustache/mustache": "^2.14"
     }
 }
