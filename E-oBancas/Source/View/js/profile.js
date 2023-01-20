@@ -72,26 +72,29 @@ async function main() {
             });
             return;
         }
-        if(login.business > 0 && login.boss == 0) {
-            document.getElementById("message").innerHTML = "Empregado";
-            const business = login.business;
-            const newUser = new User({business});
-            const e = await newUser.getBusiness();
-            document.getElementById("empresa").innerHTML = `
-                <div class="header">${e.name}</div></br>
-                <p">${e.slogan}</p></br>
-                <label>Worth: ${e.worth}</label></br>
-                <span>Criada por: ${e.founder}</span>
-            `;
-            return;
+        if(login.business > 0) {
+            if(login.boss == 0) {
+                document.getElementById("message").innerHTML = "Empregado";
+                const id = login.business;
+                const business = new Business({id});
+                const e = await business.get();
+                document.getElementById("empresa").innerHTML = `
+                    <div class="header">${e.name}</div></br>
+                    <p">${e.slogan}</p></br>
+                    <label>Worth: ${e.worth}</label></br>
+                    <span>Criada por: ${e.founder}</span>
+                `;
+                document.getElementById("empresa").style.backgroundColor = `${e.color}`;
+
+                return;
+            }
+            if(login.business > 0 && login.boss == 1) {
+                document.getElementById("message").innerHTML = "Chefe";
+    
+    
+                return;
+            }
         }
-        if(login.business > 0 && login.boss == 1) {
-            document.getElementById("message").innerHTML = "Chefe";
-
-
-            return;
-        }
-
     });
 }
 main();

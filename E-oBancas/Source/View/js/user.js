@@ -29,7 +29,7 @@ class User {
     }
 
     static async getAll() {
-        return request('Users');
+        return request('users');
     }
 
     async get() {
@@ -40,7 +40,7 @@ class User {
 
     async getBusiness() {
         const business = this.#business;
-        const resp = await request(`empresa/${business}`);
+        const resp = await request(`users/${business}`);
         return resp;
     }
 

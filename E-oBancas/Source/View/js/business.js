@@ -33,7 +33,7 @@ class Business {
 
     async get() {
         const body = {id: this.#id}
-        const resp = await request(`business/${id}`);
+        const resp = await request(`getBusiness/${id}`);
         return resp;
     }
 

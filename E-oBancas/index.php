@@ -33,8 +33,7 @@ $router->post("/login", "Api:login");
 $router->post("/register", "Api:register");
 
 $router->get("/users", "Api:getAll");
-$router->get("/user/{id}", "Api:get");
-$router->get("/user/{business}", "Api:getUserBusiness");
+$router->get("/users/{id}", "Api:get");
 
 $router->put("/update/{id}", "Api:update");
 $router->delete("/logout", "Api:logout");
@@ -44,8 +43,8 @@ $router->delete("/logout", "Api:logout");
 $router->post("/create", "Api:create");
 
 $router->get("/business", "Api:getAllBusiness");
-$router->get("/business/{id}", "Api:getBusiness");
-
+$router->get("/getBusiness/{id}", "Api:getBusiness");
+                
 $router->put("/update/{id}", "Api:update");
 $router->delete("/delete", "Api:delete");
 

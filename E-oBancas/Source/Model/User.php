@@ -70,15 +70,15 @@ class User {
         $stmt = $this->db->execute($query, ["id" => $this->business]);
         if($stmt->rowCount() == 0) return false;
         
-        $user = $stmt->fetch();
+        $business = $stmt->fetch();
         
         return [
-            "id" => $user->id,
-            "name" => $user->name,
-            "slogan" => $user->slogan,
-            "worth" => $user->worth,
-            "founder" => $user->founder,
-            "color" => $user->color,
+            "id" => $business->id,
+            "name" => $business->name,
+            "slogan" => $business->slogan,
+            "worth" => $business->worth,
+            "founder" => $business->founder,
+            "color" => $business->color,
         ];
     }
 
